@@ -1,5 +1,9 @@
 # md-chunk-search
 
+[![CI](https://github.com/KUKUNIK/md-chunk-search/actions/workflows/ci.yml/badge.svg)](https://github.com/KUKUNIK/md-chunk-search/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/md-chunk-search.svg)](https://www.npmjs.com/package/md-chunk-search)
+[![license](https://img.shields.io/badge/license-MIT-green.svg)](./LICENSE)
+
 A grep for markdown vaults that understands **sections** and **frontmatter**.
 
 If you have a folder of notes (Obsidian, [md-context-store](https://github.com/KUKUNIK/md-context-store), a docs site, an AI agent's memory dump…), plain `grep` shows you matched lines without any structure. `mdcs-search` splits each file into `##` sections and reports which **section** matched, with the section's frontmatter context — so you can filter "find 'auth' inside open issues only" without writing a custom script.
