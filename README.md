@@ -43,6 +43,9 @@ mdcs-search "redirect" --format json | jq '.[].file' | sort -u
 
 # limit + extra context lines
 mdcs-search "TODO" -n 20 -c 2
+
+# hierarchy view for nested H3/H4 vaults (see "Hierarchy view" below)
+mdcs-search "JWT" notes/ --format hierarchy -l 4
 ```
 
 ## Options
