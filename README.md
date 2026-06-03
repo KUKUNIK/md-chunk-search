@@ -8,7 +8,7 @@ A grep for markdown vaults that understands **sections** and **frontmatter**.
 
 If you have a folder of notes (Obsidian, [md-context-store](https://github.com/KUKUNIK/md-context-store), a docs site, an AI agent's memory dump…), plain `grep` shows you matched lines without any structure. `mdcs-search` splits each file into `##` sections and reports which **section** matched, with the section's frontmatter context — so you can filter "find 'auth' inside open issues only" without writing a custom script.
 
-> Status: `0.1.0` — usable, but the output format may change before `1.0`.
+> Status: `0.2.0` — usable, but the output format may change before `1.0`.
 
 ## Why not just grep?
 
@@ -59,7 +59,7 @@ mdcs-search <pattern> [paths...]
   -e, --ext <ext>             file extensions (default: md, markdown)
   -x, --exclude <dir>         directory names to skip (added to defaults)
       --show-frontmatter      print frontmatter for each matched section
-      --format <text|json>    output format (default: text)
+      --format <fmt>          output format: text | json | hierarchy (default: text)
       --no-color              disable ANSI colors in text output
 ```
 
@@ -87,6 +87,31 @@ We use JWTs.
 `mdcs-search "JWT"` returns the `auth` section (with its `lineStart`/`lineEnd`, its frontmatter, and the matched line). The `stack` section is ignored.
 
 If the file has no headings at all, the whole body becomes a single chunk. If you want to split at H3 instead of H2, pass `--level 3`.
+
+## Hierarchy view
+
+For larger vaults the flat text view can be hard to scan. `--format hierarchy`
+groups hits by file and indents them by their heading level, relative to the
+shallowest hit in that file:
+
+```bash
+mdcs-search "JWT" notes/ --format hierarchy -l 4
+```
+
+```
+notes/architecture.md
+## auth  :12
+  3: We picked JWTs over sessions for the API.
+  ### token-rotation  :18
+    2: short-lived access tokens, JWT-based
+notes/runbook.md
+### outage-2026-04  :40
+  5: JWT signing key rotated mid-incident
+```
+
+A file whose hits are all at H3 still starts flush-left. Combine with
+`-l 4` (or higher) to surface nested headings the splitter would otherwise
+swallow.
 
 The frontmatter is read once per file (with `gray-matter`) and inherited by every section in that file — that's why `--filter status=open` works at file granularity even though matches are at section granularity.
 

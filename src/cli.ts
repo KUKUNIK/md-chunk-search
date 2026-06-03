@@ -1,10 +1,10 @@
 import { Command } from "commander";
 import kleur from "kleur";
-import { formatJson, formatText } from "./lib/format.js";
+import { formatHierarchy, formatJson, formatText } from "./lib/format.js";
 import { search } from "./lib/search.js";
 import type { SearchOptions } from "./lib/types.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.2.0";
 
 function parseFilters(values: string[]): Record<string, string> {
   const out: Record<string, string> = {};
@@ -53,7 +53,11 @@ async function main(): Promise<void> {
       [] as string[],
     )
     .option("--show-frontmatter", "print matched section frontmatter")
-    .option("--format <fmt>", "output format: text | json", "text")
+    .option(
+      "--format <fmt>",
+      "output format: text | json | hierarchy",
+      "text",
+    )
     .option("--no-color", "disable ANSI colors in text output")
     .action(
       async (
@@ -86,13 +90,27 @@ async function main(): Promise<void> {
           exclude: opts.exclude.length > 0 ? opts.exclude : undefined,
         };
         const results = await search(searchOpts);
-        const out =
-          opts.format === "json"
-            ? formatJson(results)
-            : formatText(results, {
-                showFrontmatter: opts.showFrontmatter,
-                color: opts.color,
-              });
+        const fmt = opts.format.toLowerCase();
+        let out: string;
+        if (fmt === "json") {
+          out = formatJson(results);
+        } else if (fmt === "hierarchy") {
+          out = formatHierarchy(results, {
+            showFrontmatter: opts.showFrontmatter,
+            color: opts.color,
+          });
+        } else if (fmt === "text") {
+          out = formatText(results, {
+            showFrontmatter: opts.showFrontmatter,
+            color: opts.color,
+          });
+        } else {
+          process.stderr.write(
+            `${kleur.red("error")}: unknown --format "${opts.format}" (expected text | json | hierarchy)\n`,
+          );
+          process.exitCode = 2;
+          return;
+        }
         process.stdout.write(out);
         process.exitCode = results.length > 0 ? 0 : 1;
       },

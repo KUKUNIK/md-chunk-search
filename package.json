@@ -1,6 +1,6 @@
 {
   "name": "md-chunk-search",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Search markdown files at the section / chunk level, with frontmatter filtering. A friendlier grep for note vaults and context stores.",
   "type": "module",
   "main": "./dist/index.js",
