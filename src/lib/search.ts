@@ -80,15 +80,17 @@ export async function searchFile(
         });
       }
     }
-    if (matches.length === 0) continue;
+    const include = opts.invert ? matches.length === 0 : matches.length > 0;
+    if (!include) continue;
+    const reportedMatches = opts.invert ? [] : matches;
     results.push({
       file,
       heading: chunk.heading,
       level: chunk.level,
       lineStart: chunk.lineStart,
       lineEnd: chunk.lineEnd,
-      matches,
-      snippet: makeSnippet(bodyLines, matches, contextLines),
+      matches: reportedMatches,
+      snippet: makeSnippet(bodyLines, reportedMatches, contextLines),
       frontmatter: chunk.frontmatter,
     });
   }

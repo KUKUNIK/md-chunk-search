@@ -52,6 +52,10 @@ async function main(): Promise<void> {
       (value: string, prev: string[] = []) => [...prev, value],
       [] as string[],
     )
+    .option(
+      "-v, --invert",
+      "invert match: return sections that do NOT contain the pattern",
+    )
     .option("--show-frontmatter", "print matched section frontmatter")
     .option(
       "--format <fmt>",
@@ -75,6 +79,7 @@ async function main(): Promise<void> {
           showFrontmatter?: boolean;
           format: string;
           color: boolean;
+          invert?: boolean;
         },
       ) => {
         const searchOpts: SearchOptions = {
@@ -88,6 +93,7 @@ async function main(): Promise<void> {
           context: Number.parseInt(opts.context, 10),
           extensions: opts.ext.length > 0 ? opts.ext : undefined,
           exclude: opts.exclude.length > 0 ? opts.exclude : undefined,
+          invert: opts.invert,
         };
         const results = await search(searchOpts);
         const fmt = opts.format.toLowerCase();

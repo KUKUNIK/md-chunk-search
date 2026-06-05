@@ -164,6 +164,32 @@ Cache the response.
     expect(results).toHaveLength(0);
   });
 
+  it("inverts the match: returns sections without the pattern", async () => {
+    const results = await search({
+      pattern: "JWT",
+      paths: [root],
+      invert: true,
+    });
+    const headings = results.map((r) => r.heading).sort();
+    // All sections across both files EXCEPT "auth" (which contains JWT).
+    expect(headings).toEqual(["decision", "perf", "stack"]);
+    for (const r of results) {
+      expect(r.matches).toEqual([]);
+      expect(r.snippet).not.toContain("JWT");
+    }
+  });
+
+  it("invert composes with filters: invert AFTER filtering", async () => {
+    const results = await search({
+      pattern: "Cache",
+      paths: [root],
+      filters: { status: "resolved" },
+      invert: true,
+    });
+    // status=resolved limits to sub/b.md's two sections; invert drops "perf".
+    expect(results.map((r) => r.heading)).toEqual(["auth"]);
+  });
+
   it("returns empty results for nonexistent paths without throwing", async () => {
     const results = await search({
       pattern: "anything",

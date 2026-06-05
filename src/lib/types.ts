@@ -19,6 +19,13 @@ export interface SearchOptions {
   context?: number;
   extensions?: string[];
   exclude?: string[];
+  /**
+   * Invert the match: return sections that do NOT contain the pattern,
+   * after `filters` are applied. The returned `matches` array is empty
+   * (there is nothing to highlight). `snippet` still contains the first
+   * few body lines for context.
+   */
+  invert?: boolean;
 }
 
 export interface MatchLine {
