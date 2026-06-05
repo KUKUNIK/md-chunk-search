@@ -64,6 +64,7 @@ mdcs-search <pattern> [paths...]
       --show-frontmatter      print frontmatter for each matched section
       --format <fmt>          output format: text | json | hierarchy (default: text)
       --no-color              disable ANSI colors in text output
+  -v, --invert                return sections that do NOT contain the pattern
 ```
 
 Default excludes: `node_modules`, `.git`, `dist`, `build`, `.next`, `.turbo`, `coverage`.
@@ -151,6 +152,32 @@ for (const r of results) {
 - `2` — usage error (bad filter, bad regex, etc.).
 
 This matches `grep`'s convention so you can use it in shell pipelines.
+
+## Troubleshooting
+
+**"No matches" but `grep` finds it.** `mdcs-search` walks a section
+tree, not raw lines. If the pattern only appears inside a fenced code
+block or table that splitChunks parses into a different chunk than you
+expect, lower `--level` (e.g. `-l 3`) or drop to plain `grep -r` to
+confirm the line is actually there.
+
+**The whole file shows up as one chunk.** No heading at or above
+`--level` (default `2`) was found, so the whole body becomes the
+"(no heading)" section. Try `-l 1` if your files use `#` only.
+
+**`--filter status=open` matches nothing.** Frontmatter values are
+compared as strings after `String(value)`. A YAML boolean `true`
+becomes the string `"true"` — write `--filter active=true` not
+`--filter active=1`. Nested keys (`meta.tags`) are not addressed.
+
+**Why is binary file X being searched?** It is not — extensions are
+gated by `-e/--ext` (default `md`, `markdown`). Add `-e mdx` etc. as
+needed.
+
+**`--invert` returned the matching section.** Check that `--filter`
+isn't pruning the section first; `--invert` runs over the post-filter
+set, so a section excluded by `--filter` does not appear in either
+mode.
 
 ## License
 
