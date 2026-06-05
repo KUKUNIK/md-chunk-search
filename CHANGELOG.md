@@ -4,6 +4,16 @@ All notable changes follow [Keep a Changelog](https://keepachangelog.com/en/1.1.
 
 ## [Unreleased]
 
+### Added
+
+- `-v` / `--invert` CLI flag (and `SearchOptions.invert` library option)
+  returns sections that do NOT contain the pattern. Composes with
+  `--filter`: invert runs over the post-filter set.
+- README "Troubleshooting" section covering the most common surprises:
+  pattern lives inside a fenced block, no heading at `--level`, string
+  vs boolean frontmatter comparison, extension gating, and how
+  `--invert` interacts with `--filter`.
+
 ## [0.2.0] - 2026-06-03
 
 ### Added
